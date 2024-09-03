@@ -12,39 +12,54 @@ use framebuffer::Framebuffer;
 use render::render;
 use camera::Camera;
 use material::Material;
+use material::Texture; // Usamos Texture del módulo material
 use color::Color;
 use nalgebra_glm::{Vec3, vec3};
 use sphere::Sphere;
 use light::Light;
-use minifb::{Key, Window, WindowOptions}; // Importaciones para manejar la ventana y las teclas
+use minifb::{Key, Window, WindowOptions};
 
 fn main() {
     let width = 800;
     let height = 600;
 
+    // Crear un framebuffer de 800x600
     let mut framebuffer = Framebuffer::new(width, height);
 
-    // Material de la primera esfera (reflexiva)
-    let reflective_material = Material::new(Color::new(255, 0, 0), 50.0, [0.6, 0.3, 0.8, 0.0], 1.0, 0.0);
+    // Cargar la textura desde un archivo
+    let texture_path = "C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/texture.png";
+    let texture = Texture::load_from_file(texture_path);
 
-    // Material de la segunda esfera (transparente)
-    let refractive_material = Material::new(Color::new(0, 255, 0), 50.0, [0.4, 0.3, 0.0, 0.9], 1.5, 0.9);
+    // Definir el material de la esfera con textura
+    let textured_material = Material {
+        diffuse: Color::new(255, 255, 255),
+        specular: 50.0,
+        albedo: [0.6, 0.3, 0.1, 0.0],
+        refractive_index: 1.5,
+        transparency: 0.0,
+        texture: Some(texture),  // Asignar la textura al material
+        has_texture: true,       // Indicar que el material tiene una textura
+    };
 
-    let sphere1 = Sphere::new(Vec3::new(-1.5, 0.0, -5.0), 1.0, reflective_material);
-    let sphere2 = Sphere::new(Vec3::new(1.5, 0.0, -5.0), 1.0, refractive_material);
+    // Crear una esfera con el material texturizado
+    let sphere = Sphere::new(Vec3::new(0.0, 0.0, -5.0), 1.0, textured_material);
 
-    let light = Light::new(Vec3::new(5.0, 5.0, 5.0), Color::new(255, 255, 255), 1.0);
+    // Definir la luz en la escena
+    let light = Light::new(Vec3::new(2.0, 4.0, 3.0), Color::new(255, 255, 255), 1.0);
 
-    let objects = vec![sphere1, sphere2];
+    // Definir los objetos en la escena
+    let objects = vec![sphere];
 
+    // Crear la cámara
     let mut camera = Camera::new(
         Vec3::new(0.0, 0.0, 5.0),
         Vec3::new(0.0, 0.0, 0.0),
         Vec3::new(0.0, 1.0, 0.0),
     );
 
+    // Crear la ventana
     let mut window = Window::new(
-        "Raytracer with Reflections and Refractions",
+        "Raytracer with Textured Sphere",
         width,
         height,
         WindowOptions::default(),
@@ -52,9 +67,12 @@ fn main() {
         panic!("{}", e);
     });
 
+    // Variables para controlar la velocidad de la cámara
     let camera_speed = 0.1;
 
+    // Loop principal
     while window.is_open() && !window.is_key_down(Key::Escape) {
+        // Manejar el movimiento de la cámara con las teclas WASD
         if window.is_key_down(Key::W) {
             camera.move_camera(vec3(0.0, 0.0, -camera_speed));
         }
@@ -68,8 +86,10 @@ fn main() {
             camera.move_camera(vec3(camera_speed, 0.0, 0.0));
         }
 
+        // Renderizar la escena
         render(&mut framebuffer, objects.as_slice(), &camera, &light);
 
+        // Actualizar la ventana con el framebuffer renderizado
         window.update_with_buffer(&framebuffer.buffer, framebuffer.width, framebuffer.height).unwrap();
     }
 }
