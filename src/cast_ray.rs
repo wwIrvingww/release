@@ -26,10 +26,32 @@ fn cast_shadow(intersect: &Intersect, light: &Light, objects: &[Sphere]) -> f32 
     shadow_intensity
 }
 
+fn refract(incident: &Vec3, normal: &Vec3, eta_t: f32) -> Vec3 {
+    let cosi = -incident.dot(normal).max(-1.0).min(1.0);
+    let (n_cosi, eta, n_normal);
+
+    if cosi < 0.0 {
+        n_cosi = -cosi;
+        eta = 1.0 / eta_t;
+        n_normal = -normal;
+    } else {
+        n_cosi = cosi;
+        eta = eta_t;
+        n_normal = *normal;
+    }
+
+    let k = 1.0 - eta * eta * (1.0 - n_cosi * n_cosi);
+
+    if k < 0.0 {
+        reflect(incident, &n_normal)
+    } else {
+        eta * incident + (eta * n_cosi - k.sqrt()) * n_normal
+    }
+}
+
 pub fn cast_ray(ray_origin: &Vec3, ray_direction: &Vec3, objects: &[Sphere], light: &Light, depth: u32) -> Color {
-    // Limitar la profundidad de la recursión
     if depth > 3 {
-        return Color::new(135, 206, 235); // Color del cielo
+        return Color::new(135, 206, 235); // Color del cielo si se supera la profundidad
     }
 
     let mut intersect = Intersect::empty();
@@ -47,32 +69,35 @@ pub fn cast_ray(ray_origin: &Vec3, ray_direction: &Vec3, objects: &[Sphere], lig
         return Color::new(135, 206, 235); // Color de fondo
     }
 
-    // Calcular la intensidad de la sombra
-    let shadow_intensity = cast_shadow(&intersect, light, objects);
-    let light_intensity = light.intensity * (1.0 - shadow_intensity);
+    // Calculamos reflexión y refracción
+    let mut reflect_color = Color::black();
+    let mut refract_color = Color::black();
+    let reflectivity = intersect.material.albedo[2];
+    let transparency = intersect.material.albedo[3];
 
-    // Calcular la dirección de la luz
+    if reflectivity > 0.0 {
+        let reflect_dir = reflect(&-ray_direction, &intersect.normal).normalize();
+        let reflect_origin = intersect.point + intersect.normal * 1e-3;
+        reflect_color = cast_ray(&reflect_origin, &reflect_dir, objects, light, depth + 1);
+    }
+
+    if transparency > 0.0 {
+        let refract_dir = refract(ray_direction, &intersect.normal, intersect.material.refractive_index).normalize();
+        let refract_origin = intersect.point - intersect.normal * 1e-3;
+        refract_color = cast_ray(&refract_origin, &refract_dir, objects, light, depth + 1);
+    }
+
     let light_dir = (light.position - intersect.point).normalize();
     let view_dir = (ray_origin - intersect.point).normalize();
     let reflect_dir = reflect(&(-light_dir), &intersect.normal);
 
-    // Calcular el factor de difusión
     let diffuse_intensity = intersect.normal.dot(&light_dir).max(0.0).min(1.0);
-    let diffuse = intersect.material.diffuse * intersect.material.albedo[0] * diffuse_intensity * light_intensity;
+    let diffuse = intersect.material.diffuse * intersect.material.albedo[0] * diffuse_intensity * light.intensity;
 
-    // Calcular el componente especular
     let specular_intensity = view_dir.dot(&reflect_dir).max(0.0).powf(intersect.material.specular);
-    let specular = light.color * intersect.material.albedo[1] * specular_intensity * light_intensity;
+    let specular = light.color * intersect.material.albedo[1] * specular_intensity * light.intensity;
 
-    // Calcular la reflexión
-    let mut reflect_color = Color::new(0, 0, 0);
-    let reflectivity = intersect.material.reflectivity;
-    if reflectivity > 0.0 {
-        let reflect_dir = reflect(&ray_direction, &intersect.normal).normalize();
-        let reflect_origin = intersect.point + intersect.normal * 1e-3; // Evitar el acné
-        reflect_color = cast_ray(&reflect_origin, &reflect_dir, objects, light, depth + 1);
-    }
-
-    // Combinar difuso, especular y reflexión
-    (diffuse + specular) * (1.0 - reflectivity) + reflect_color * reflectivity
+    (diffuse + specular) * (1.0 - reflectivity - transparency) + (reflect_color * reflectivity) + (refract_color * transparency)
 }
+
+

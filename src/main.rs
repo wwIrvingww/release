@@ -22,35 +22,29 @@ fn main() {
     let width = 800;
     let height = 600;
 
-    // Crear un framebuffer de 800x600
     let mut framebuffer = Framebuffer::new(width, height);
 
-    // Definir los materiales de las esferas
-    let red_material = Material::new(Color::new(255, 0, 0), 50.0, [0.6, 0.3], 0.5); // 50% reflexión
-    let blue_material = Material::new(Color::new(0, 0, 255), 50.0, [0.6, 0.3], 0.2); // 20% reflexión
-    let green_material = Material::new(Color::new(0, 255, 0), 50.0, [0.6, 0.3], 0.8); // 80% reflexión
+    // Material de la primera esfera (reflexiva)
+    let reflective_material = Material::new(Color::new(255, 0, 0), 50.0, [0.6, 0.3, 0.8, 0.0], 1.0, 0.0);
 
-    // Crear las esferas
-    let sphere1 = Sphere::new(Vec3::new(-2.0, 0.0, -5.0), 1.0, red_material);
-    let sphere2 = Sphere::new(Vec3::new(2.0, 0.0, -6.0), 1.0, blue_material);
-    let sphere3 = Sphere::new(Vec3::new(0.0, -1.5, -4.0), 1.0, green_material);
+    // Material de la segunda esfera (transparente)
+    let refractive_material = Material::new(Color::new(0, 255, 0), 50.0, [0.4, 0.3, 0.0, 0.9], 1.5, 0.9);
 
-    // Definir la luz en la escena
-    let light = Light::new(Vec3::new(2.0, 4.0, 3.0), Color::new(255, 255, 255), 1.0);
+    let sphere1 = Sphere::new(Vec3::new(-1.5, 0.0, -5.0), 1.0, reflective_material);
+    let sphere2 = Sphere::new(Vec3::new(1.5, 0.0, -5.0), 1.0, refractive_material);
 
-    // Definir los objetos en la escena
-    let objects = vec![sphere1, sphere2, sphere3];
+    let light = Light::new(Vec3::new(5.0, 5.0, 5.0), Color::new(255, 255, 255), 1.0);
 
-    // Crear la cámara
+    let objects = vec![sphere1, sphere2];
+
     let mut camera = Camera::new(
         Vec3::new(0.0, 0.0, 5.0),
         Vec3::new(0.0, 0.0, 0.0),
         Vec3::new(0.0, 1.0, 0.0),
     );
 
-    // Crear la ventana
     let mut window = Window::new(
-        "Raytracer with Reflections and Shadows",
+        "Raytracer with Reflections and Refractions",
         width,
         height,
         WindowOptions::default(),
@@ -58,12 +52,9 @@ fn main() {
         panic!("{}", e);
     });
 
-    // Variables para controlar la velocidad de la cámara
     let camera_speed = 0.1;
 
-    // Loop principal
     while window.is_open() && !window.is_key_down(Key::Escape) {
-        // Manejar el movimiento de la cámara con las teclas WASD
         if window.is_key_down(Key::W) {
             camera.move_camera(vec3(0.0, 0.0, -camera_speed));
         }
@@ -77,10 +68,8 @@ fn main() {
             camera.move_camera(vec3(camera_speed, 0.0, 0.0));
         }
 
-        // Renderizar la escena
         render(&mut framebuffer, objects.as_slice(), &camera, &light);
 
-        // Actualizar la ventana con el framebuffer renderizado
         window.update_with_buffer(&framebuffer.buffer, framebuffer.width, framebuffer.height).unwrap();
     }
 }
