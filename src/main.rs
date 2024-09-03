@@ -25,21 +25,21 @@ fn main() {
     // Crear un framebuffer de 800x600
     let mut framebuffer = Framebuffer::new(width, height);
 
-    // Definir el material de la primera esfera
-    let red_material = Material::new(Color::new(255, 0, 0), 50.0, [0.6, 0.3]);
-    // Definir el material de la segunda esfera
-    let blue_material = Material::new(Color::new(0, 0, 255), 50.0, [0.6, 0.3]);
+    // Definir los materiales de las esferas
+    let red_material = Material::new(Color::new(255, 0, 0), 50.0, [0.6, 0.3], 0.5); // 50% reflexión
+    let blue_material = Material::new(Color::new(0, 0, 255), 50.0, [0.6, 0.3], 0.2); // 20% reflexión
+    let green_material = Material::new(Color::new(0, 255, 0), 50.0, [0.6, 0.3], 0.8); // 80% reflexión
 
-    // Crear la primera esfera
-    let sphere1 = Sphere::new(Vec3::new(0.0, 0.0, -5.0), 1.0, red_material);
-    // Crear la segunda esfera desplazada
+    // Crear las esferas
+    let sphere1 = Sphere::new(Vec3::new(-2.0, 0.0, -5.0), 1.0, red_material);
     let sphere2 = Sphere::new(Vec3::new(2.0, 0.0, -6.0), 1.0, blue_material);
+    let sphere3 = Sphere::new(Vec3::new(0.0, -1.5, -4.0), 1.0, green_material);
 
     // Definir la luz en la escena
     let light = Light::new(Vec3::new(2.0, 4.0, 3.0), Color::new(255, 255, 255), 1.0);
 
     // Definir los objetos en la escena
-    let objects = vec![sphere1, sphere2];
+    let objects = vec![sphere1, sphere2, sphere3];
 
     // Crear la cámara
     let mut camera = Camera::new(
@@ -50,7 +50,7 @@ fn main() {
 
     // Crear la ventana
     let mut window = Window::new(
-        "Raytracer with Shadows and Camera Movement",
+        "Raytracer with Reflections and Shadows",
         width,
         height,
         WindowOptions::default(),

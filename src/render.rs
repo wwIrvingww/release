@@ -5,7 +5,6 @@ use crate::cast_ray::cast_ray; // Asegúrate de importar la función desde cast_
 use crate::camera::Camera;
 use nalgebra_glm::Vec3;
 
-
 pub fn render(framebuffer: &mut Framebuffer, objects: &[Sphere], camera: &Camera, light: &Light) {
     let width = framebuffer.width as f32;
     let height = framebuffer.height as f32;
@@ -23,8 +22,8 @@ pub fn render(framebuffer: &mut Framebuffer, objects: &[Sphere], camera: &Camera
             // Calcular la dirección del rayo para este píxel
             let ray_direction = camera.basis_change(&Vec3::new(screen_x, screen_y, -1.0));
 
-            // Lanzar el rayo y obtener el color del píxel
-            let pixel_color = cast_ray(&camera.eye, &ray_direction, objects, light);
+            // Lanzar el rayo y obtener el color del píxel con profundidad inicial 0
+            let pixel_color = cast_ray(&camera.eye, &ray_direction, objects, light, 0);
 
             // Dibujar el píxel en la pantalla con el color devuelto
             framebuffer.set_current_color(pixel_color);

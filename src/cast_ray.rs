@@ -11,19 +11,27 @@ fn reflect(incident: &Vec3, normal: &Vec3) -> Vec3 {
 // Función para calcular sombras
 fn cast_shadow(intersect: &Intersect, light: &Light, objects: &[Sphere]) -> f32 {
     let light_dir = (light.position - intersect.point).normalize();
-    let shadow_ray_origin = intersect.point + intersect.normal * 1e-3; // Desplazar el origen del rayo para evitar la autointersección
+    let shadow_ray_origin = intersect.point + intersect.normal * 1e-3; // Desplazamos el origen del rayo
+
+    let mut shadow_intensity = 0.0;
 
     for object in objects {
         let shadow_intersect = object.ray_intersect(&shadow_ray_origin, &light_dir);
         if shadow_intersect.is_intersecting && shadow_intersect.distance > 1e-3 {
-            return 1.0; // Se encontró una sombra
+            shadow_intensity = 1.0;
+            break;
         }
     }
 
-    0.0 // No se encontró sombra
+    shadow_intensity
 }
 
-pub fn cast_ray(ray_origin: &Vec3, ray_direction: &Vec3, objects: &[Sphere], light: &Light) -> Color {
+pub fn cast_ray(ray_origin: &Vec3, ray_direction: &Vec3, objects: &[Sphere], light: &Light, depth: u32) -> Color {
+    // Limitar la profundidad de la recursión
+    if depth > 3 {
+        return Color::new(135, 206, 235); // Color del cielo
+    }
+
     let mut intersect = Intersect::empty();
     let mut zbuffer = f32::INFINITY;
 
@@ -56,6 +64,15 @@ pub fn cast_ray(ray_origin: &Vec3, ray_direction: &Vec3, objects: &[Sphere], lig
     let specular_intensity = view_dir.dot(&reflect_dir).max(0.0).powf(intersect.material.specular);
     let specular = light.color * intersect.material.albedo[1] * specular_intensity * light_intensity;
 
-    // Sumar el componente difuso y especular
-    diffuse + specular
+    // Calcular la reflexión
+    let mut reflect_color = Color::new(0, 0, 0);
+    let reflectivity = intersect.material.reflectivity;
+    if reflectivity > 0.0 {
+        let reflect_dir = reflect(&ray_direction, &intersect.normal).normalize();
+        let reflect_origin = intersect.point + intersect.normal * 1e-3; // Evitar el acné
+        reflect_color = cast_ray(&reflect_origin, &reflect_dir, objects, light, depth + 1);
+    }
+
+    // Combinar difuso, especular y reflexión
+    (diffuse + specular) * (1.0 - reflectivity) + reflect_color * reflectivity
 }
