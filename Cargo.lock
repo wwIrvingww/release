@@ -788,6 +788,7 @@ dependencies = [
  "minifb",
  "nalgebra 0.29.0",
  "nalgebra-glm",
+ "once_cell",
 ]
 
 [[package]]

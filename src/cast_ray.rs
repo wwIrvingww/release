@@ -69,6 +69,10 @@ pub fn cast_ray(ray_origin: &Vec3, ray_direction: &Vec3, objects: &[Sphere], lig
         return Color::new(135, 206, 235); // Color de fondo
     }
 
+     // Depurar la textura con las coordenadas UV
+     let test_texture_color = intersect.material.get_diffuse_color(intersect.u, intersect.v);
+     println!("Color de la textura en el punto UV: {:?}", test_texture_color);
+
     // Calculamos reflexión y refracción
     let mut reflect_color = Color::black();
     let mut refract_color = Color::black();

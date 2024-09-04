@@ -1,5 +1,6 @@
 use crate::color::Color;
 use std::path::Path;
+use std::sync::Arc;
 
 #[derive(Debug, Clone)]
 pub struct Texture {
@@ -13,7 +14,7 @@ impl Texture {
         self.data[y * self.width + x]
     }
 
-    pub fn load_from_file<P: AsRef<Path>>(path: P) -> Self {
+    pub fn load_from_file<P: AsRef<Path>>(path: P) -> Arc<Self> {
         let img = image::open(path).expect("Failed to load texture");
         let img = img.to_rgb8();
         let (width, height) = img.dimensions();
@@ -21,11 +22,11 @@ impl Texture {
             .pixels()
             .map(|p| Color::new(p[0], p[1], p[2]))
             .collect();
-        Texture {
+        Arc::new(Texture {
             data,
             width: width as usize,
             height: height as usize,
-        }
+        })
     }
 }
 
@@ -36,20 +37,28 @@ pub struct Material {
     pub albedo: [f32; 4],
     pub refractive_index: f32,
     pub transparency: f32,
-    pub texture: Option<Texture>, // Opcional: referencia a la textura
-    pub has_texture: bool, // Indicador de si el material tiene textura
+    pub texture: Option<Arc<Texture>>, // Usa Arc para almacenar la textura
+    pub has_texture: bool,              // Indicador de si el material tiene textura
 }
 
 impl Material {
-    pub fn new(diffuse: Color, specular: f32, albedo: [f32; 4], refractive_index: f32, transparency: f32) -> Self {
+    pub fn new(
+        diffuse: Color,
+        specular: f32,
+        albedo: [f32; 4],
+        refractive_index: f32,
+        transparency: f32,
+        texture: Option<Arc<Texture>>,
+        has_texture: bool,
+    ) -> Self {
         Material {
             diffuse,
             specular,
             albedo,
             refractive_index,
             transparency,
-            texture: None,
-            has_texture: false,
+            texture,
+            has_texture,
         }
     }
 

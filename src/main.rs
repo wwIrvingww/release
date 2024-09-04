@@ -6,18 +6,30 @@ mod material;
 mod ray_intersect;
 mod sphere;
 mod light;
-mod cast_ray;
+mod cast_ray; // Asegúrate de agregar esto al principio de main.rs
 
 use framebuffer::Framebuffer;
 use render::render;
 use camera::Camera;
-use material::Material;
-use material::Texture; // Usamos Texture del módulo material
+use material::{Material, Texture}; // Asegúrate de importar tanto Material como Texture
 use color::Color;
 use nalgebra_glm::{Vec3, vec3};
 use sphere::Sphere;
 use light::Light;
-use minifb::{Key, Window, WindowOptions};
+use once_cell::sync::OnceCell; // Importa OnceCell
+use minifb::{Key, Window, WindowOptions}; // Importaciones para manejar la ventana y las teclas
+use std::sync::Arc;
+
+// Usa OnceCell para crear una referencia estática a la textura
+static TEXTURE: OnceCell<Arc<Texture>> = OnceCell::new();
+
+fn get_texture() -> Arc<Texture> {
+    TEXTURE.get_or_init(|| {
+        // Cargar la textura desde un archivo
+        let texture_path = "C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/texture.png";
+        Texture::load_from_file(texture_path) // Ya retorna un Arc<Texture>
+    }).clone() // Retorna una referencia clonada de Arc
+}
 
 fn main() {
     let width = 800;
@@ -26,26 +38,37 @@ fn main() {
     // Crear un framebuffer de 800x600
     let mut framebuffer = Framebuffer::new(width, height);
 
-    // Cargar la textura desde un archivo
-    let texture_path = "C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/texture.png";
-    let texture = Texture::load_from_file(texture_path);
+    // Load the texture only once
+    let texture = get_texture();
 
-    // Definir el material de la esfera con textura
+    //Definir el material de la esfera con textura
     let textured_material = Material {
-        diffuse: Color::new(255, 255, 255),
+        diffuse: Color::new(255, 0, 0),  // Cambia a gris
         specular: 50.0,
         albedo: [0.6, 0.3, 0.1, 0.0],
         refractive_index: 1.5,
         transparency: 0.0,
-        texture: Some(texture),  // Asignar la textura al material
-        has_texture: true,       // Indicar que el material tiene una textura
+        texture: Some(texture.clone()),  // Clonar el Arc
+        has_texture: true,               // Indicar que el material tiene una textura
     };
+    
+
+    // let textured_material = Material {
+    //     diffuse: Color::new(255, 0, 0),  // Cambia a rojo puro para probar
+    //     specular: 50.0,
+    //     albedo: [0.6, 0.3, 0.1, 0.0],
+    //     refractive_index: 1.5,
+    //     transparency: 0.0,
+    //     texture: None,  // Sin textura para probar
+    //     has_texture: false,
+    // };
+    
 
     // Crear una esfera con el material texturizado
     let sphere = Sphere::new(Vec3::new(0.0, 0.0, -5.0), 1.0, textured_material);
 
     // Definir la luz en la escena
-    let light = Light::new(Vec3::new(2.0, 4.0, 3.0), Color::new(255, 255, 255), 1.0);
+    let light = Light::new(Vec3::new(2.0, 4.0, 3.0), Color::new(255, 255, 255), 2.0);  // Intensidad de la luz aumentada
 
     // Definir los objetos en la escena
     let objects = vec![sphere];

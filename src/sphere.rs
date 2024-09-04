@@ -22,11 +22,13 @@ impl Sphere {
         // Calcular el vector desde el centro de la esfera hasta el punto de impacto
         let r = (point - self.center).normalize();
 
-        // Calcular θ (theta) y φ (phi) usando coordenadas esféricas
-        let theta = r.z.atan2(r.x);
+        // Calcular θ (theta) usando atan2 en el plano XZ
+        let theta = r.z.atan2(r.x); // Usamos Z y X en lugar de Z y Y
+
+        // Calcular φ (phi) usando el ángulo del vector con respecto al eje Y
         let phi = r.y.asin();
 
-        // Convertir θ y φ a coordenadas UV
+        // Convertir θ y φ a coordenadas UV en el rango [0, 1]
         let u = 0.5 + theta / (2.0 * std::f32::consts::PI);
         let v = 0.5 - phi / std::f32::consts::PI;
 
