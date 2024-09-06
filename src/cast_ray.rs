@@ -1,7 +1,6 @@
 use nalgebra_glm::{Vec3, dot};
 use crate::color::Color;
 use crate::ray_intersect::{Intersect, RayIntersect};
-use crate::sphere::Sphere;
 use crate::light::Light;
 
 fn reflect(incident: &Vec3, normal: &Vec3) -> Vec3 {
@@ -9,9 +8,9 @@ fn reflect(incident: &Vec3, normal: &Vec3) -> Vec3 {
 }
 
 // Función para calcular sombras
-fn cast_shadow(intersect: &Intersect, light: &Light, objects: &[Sphere]) -> f32 {
+fn cast_shadow(intersect: &Intersect, light: &Light, objects: &[Box<dyn RayIntersect>]) -> f32 {
     let light_dir = (light.position - intersect.point).normalize();
-    let shadow_ray_origin = intersect.point + intersect.normal * 1e-3; // Desplazamos el origen del rayo
+    let shadow_ray_origin = intersect.point + intersect.normal * 1e-3;
 
     let mut shadow_intensity = 0.0;
 
@@ -49,14 +48,15 @@ fn refract(incident: &Vec3, normal: &Vec3, eta_t: f32) -> Vec3 {
     }
 }
 
-pub fn cast_ray(ray_origin: &Vec3, ray_direction: &Vec3, objects: &[Sphere], light: &Light, depth: u32) -> Color {
+pub fn cast_ray(ray_origin: &Vec3, ray_direction: &Vec3, objects: &[Box<dyn RayIntersect>], light: &Light, depth: u32) -> Color {
     if depth > 3 {
-        return Color::new(135, 206, 235); // Color del cielo si se supera la profundidad
+        return Color::new(135, 206, 235); // Color del cielo
     }
 
     let mut intersect = Intersect::empty();
     let mut zbuffer = f32::INFINITY;
 
+    // Iterar sobre cualquier objeto que implemente RayIntersect
     for object in objects {
         let tmp = object.ray_intersect(ray_origin, ray_direction);
         if tmp.is_intersecting && tmp.distance < zbuffer {
@@ -69,8 +69,11 @@ pub fn cast_ray(ray_origin: &Vec3, ray_direction: &Vec3, objects: &[Sphere], lig
         return Color::new(135, 206, 235); // Color de fondo
     }
 
+    // Luz ambiental
+    let ambient_intensity = 0.3; // Aumenta este valor para intensificar la luz ambiental
+    let ambient_color = Color::new(255, 255, 255) * ambient_intensity; // Luz ambiental blanca
 
-    // Calculamos reflexión y refracción
+    // Reflexión y refracción
     let mut reflect_color = Color::black();
     let mut refract_color = Color::black();
     let reflectivity = intersect.material.albedo[2];
@@ -99,7 +102,6 @@ pub fn cast_ray(ray_origin: &Vec3, ray_direction: &Vec3, objects: &[Sphere], lig
     let specular_intensity = view_dir.dot(&reflect_dir).max(0.0).powf(intersect.material.specular);
     let specular = light.color * intersect.material.albedo[1] * specular_intensity * light.intensity;
 
-    (diffuse + specular) * (1.0 - reflectivity - transparency) + (reflect_color * reflectivity) + (refract_color * transparency)
+    // Calcular el color final
+    (ambient_color + diffuse + specular) * (1.0 - reflectivity - transparency) + (reflect_color * reflectivity) + (refract_color * transparency)
 }
-
-

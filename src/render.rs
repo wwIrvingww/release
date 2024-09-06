@@ -1,11 +1,11 @@
 use crate::framebuffer::Framebuffer;
 use crate::light::Light;
-use crate::sphere::Sphere;
-use crate::cast_ray::cast_ray; // Asegúrate de importar la función desde cast_ray.rs
+use crate::ray_intersect::RayIntersect; // Usamos RayIntersect en lugar de Sphere
+use crate::cast_ray::cast_ray;
 use crate::camera::Camera;
 use nalgebra_glm::Vec3;
 
-pub fn render(framebuffer: &mut Framebuffer, objects: &[Sphere], camera: &Camera, light: &Light) {
+pub fn render(framebuffer: &mut Framebuffer, objects: &[Box<dyn RayIntersect>], camera: &Camera, light: &Light) {
     let width = framebuffer.width as f32;
     let height = framebuffer.height as f32;
     let aspect_ratio = width / height;
@@ -18,7 +18,7 @@ pub fn render(framebuffer: &mut Framebuffer, objects: &[Sphere], camera: &Camera
 
             let ray_direction = camera.basis_change(&Vec3::new(screen_x, screen_y, -1.0));
 
-            // Pasamos depth como argumento
+            // Pasamos depth como argumento y usamos trait objects (RayIntersect)
             let pixel_color = cast_ray(&camera.eye, &ray_direction, objects, light, 0);
 
             framebuffer.set_current_color(pixel_color);
@@ -26,4 +26,3 @@ pub fn render(framebuffer: &mut Framebuffer, objects: &[Sphere], camera: &Camera
         }
     }
 }
-
