@@ -26,21 +26,43 @@ impl Cube {
 
     // Función para calcular las coordenadas UV
     pub fn get_uv(&self, point: &Vec3, normal: &Vec3) -> (f32, f32) {
-        if normal.x.abs() > 0.99 {
-            let u = (point.z - self.min.z) / (self.max.z - self.min.z);
-            let v = (point.y - self.min.y) / (self.max.y - self.min.y);
-            return (u, v);
-        } else if normal.y.abs() > 0.99 {
-            let u = (point.x - self.min.x) / (self.max.x - self.min.x);
-            let v = (point.z - self.min.z) / (self.max.z - self.min.z);
-            return (u, v);
-        } else if normal.z.abs() > 0.99 {
-            let u = (point.x - self.min.x) / (self.max.x - self.min.x);
-            let v = (point.y - self.min.y) / (self.max.y - self.min.y);
-            return (u, v);
+        let mut u = 0.0;
+        let mut v = 0.0;
+    
+        // Front face
+        if normal.z.abs() > 0.99 {
+            u = (point.x - self.min.x) / (self.max.x - self.min.x);
+            v = (point.y - self.min.y) / (self.max.y - self.min.y);
         }
-        (0.0, 0.0)
+        // Back face
+        else if normal.z.abs() > 0.01 && normal.z < 0.0 {
+            u = (self.max.x - point.x) / (self.max.x - self.min.x);
+            v = (point.y - self.min.y) / (self.max.y - self.min.y);
+        }
+        // Left face
+        else if normal.x.abs() > 0.99 && normal.x < 0.0 {
+            u = (self.max.z - point.z) / (self.max.z - self.min.z);
+            v = (point.y - self.min.y) / (self.max.y - self.min.y);
+        }
+        // Right face
+        else if normal.x.abs() > 0.99 && normal.x > 0.0 {
+            u = (point.z - self.min.z) / (self.max.z - self.min.z);
+            v = (point.y - self.min.y) / (self.max.y - self.min.y);
+        }
+        // Top face
+        else if normal.y.abs() > 0.99 && normal.y > 0.0 {
+            u = (point.x - self.min.x) / (self.max.x - self.min.x);
+            v = (self.max.z - point.z) / (self.max.z - self.min.z);
+        }
+        // Bottom face
+        else if normal.y.abs() > 0.99 && normal.y < 0.0 {
+            u = (point.x - self.min.x) / (self.max.x - self.min.x);
+            v = (point.z - self.min.z) / (self.max.z - self.min.z);
+        }
+    
+        (u, v)
     }
+    
 }
 
 impl RayIntersect for Cube {
@@ -58,31 +80,51 @@ impl RayIntersect for Cube {
             let distance = t_near;
             let point = ray_origin + ray_direction * distance;
 
-            // Determinar la normal
-            let mut normal = if (point.x - self.min.x).abs() < 1e-3 {
-                Vec3::new(-1.0, 0.0, 0.0)
-            } else if (point.x - self.max.x).abs() < 1e-3 {
-                Vec3::new(1.0, 0.0, 0.0)
-            } else if (point.y - self.min.y).abs() < 1e-3 {
-                Vec3::new(0.0, -1.0, 0.0)
-            } else if (point.y - self.max.y).abs() < 1e-3 {
-                Vec3::new(0.0, 1.0, 0.0)
-            } else if (point.z - self.min.z).abs() < 1e-3 {
-                Vec3::new(0.0, 0.0, -1.0)
-            } else {
-                Vec3::new(0.0, 0.0, 1.0)
-            };
+            // Determinar la normal utilizando el centro
+            // Determinar la normal utilizando el centro
+            let mut normal = Vec3::new(0.0, 0.0, 0.0);
 
-            // Verificar si la normal debe invertirse
-            let direction_to_center = (self.center - point).normalize();
-            if normal.dot(&direction_to_center) > 0.0 {
-                normal = -normal;  // Invertir la normal si está "dentro" del cubo
+            let epsilon = 0.001; // Pequeña tolerancia para comparar valores cercanos
+            let center_to_point = point - self.center;
+
+            if (center_to_point.x.abs() - (self.max.x - self.center.x)).abs() < epsilon {
+                normal.x = center_to_point.x.signum(); // Normal en el eje X
+            } else if (center_to_point.x.abs() - (self.center.x - self.min.x)).abs() < epsilon {
+                normal.x = -center_to_point.x.signum(); // Normal en el eje X (cara opuesta)
+            } else if (center_to_point.y.abs() - (self.max.y - self.center.y)).abs() < epsilon {
+                normal.y = center_to_point.y.signum(); // Normal en el eje Y
+            } else if (center_to_point.y.abs() - (self.center.y - self.min.y)).abs() < epsilon {
+                normal.y = -center_to_point.y.signum(); // Normal en el eje Y (cara opuesta)
+            } else if (center_to_point.z.abs() - (self.max.z - self.center.z)).abs() < epsilon {
+                normal.z = center_to_point.z.signum(); // Normal en el eje Z
+            } else if (center_to_point.z.abs() - (self.center.z - self.min.z)).abs() < epsilon {
+                normal.z = -center_to_point.z.signum(); // Normal en el eje Z (cara opuesta)
             }
-
+       
+            // Obtener coordenadas UV
             let (u, v) = self.get_uv(&point, &normal);
-            return Intersect::new(point, normal, distance, self.material.clone(), u, v);
+
+            return Intersect {
+                distance,
+                point,
+                normal,
+                material: self.material.clone(),
+                is_intersecting: true, // Hay una intersección
+                u, // Coordenada u obtenida de get_uv
+                v, // Coordenada v obtenida de get_uv
+            };
         }
 
-        Intersect::empty()
+        // Si no hay intersección, devolvemos un Intersect vacío
+        Intersect {
+            is_intersecting: false,
+            distance: 0.0,
+            point: Vec3::new(0.0, 0.0, 0.0),
+            normal: Vec3::new(0.0, 0.0, 0.0),
+            material: self.material.clone(),
+            u: 0.0,
+            v: 0.0,
+        }
     }
 }
+

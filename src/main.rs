@@ -5,23 +5,25 @@ mod camera;
 mod material;
 mod ray_intersect;
 mod sphere;
-mod cube; // Asegúrate de agregar el módulo del cubo
+mod cube;
+mod grid; // Asegúrate de agregar el módulo del grid
 mod light;
 mod cast_ray;
 
 use framebuffer::Framebuffer;
 use render::render;
 use camera::Camera;
-use material::{Material, Texture}; 
+use material::{Material, Texture};
 use color::Color;
 use nalgebra_glm::{Vec3, vec3};
 use sphere::Sphere;
-use cube::Cube; // Importa el cubo
+use cube::Cube;
+use grid::{Grid3D, GridObject}; // Importa el grid y sus objetos
 use light::Light;
-use once_cell::sync::OnceCell; 
-use minifb::{Key, Window, WindowOptions}; 
+use once_cell::sync::OnceCell;
+use minifb::{Key, Window, WindowOptions};
 use std::sync::Arc;
-use crate::ray_intersect::RayIntersect; // <-- Agregar esta línea para importar el trait RayIntersect
+use crate::ray_intersect::RayIntersect;
 
 static TEXTURE: OnceCell<Arc<Texture>> = OnceCell::new();
 
@@ -51,7 +53,7 @@ fn main() {
     };
 
     let cube_material = Material {
-        diffuse: Color::new(255, 255, 255), 
+        diffuse: Color::new(255, 255, 255),
         specular: 50.0,
         albedo: [0.6, 0.3, 0.1, 0.0],
         refractive_index: 1.5,
@@ -60,26 +62,53 @@ fn main() {
         has_texture: true,
     };
 
-    let sphere = Sphere::new(Vec3::new(0.0, 0.0, -5.0), 1.0, sphere_material);
+    // Crear un grid de 10x10x10
+    let mut grid = Grid3D::new(10);
 
-    let cube = Cube::new(
-        Vec3::new(2.0, 0.0, -6.0),  // Centro del cubo
-        1.0,                        // Tamaño del cubo
-        cube_material,
+    // Posicionar objetos en el grid
+    grid.place_object(1, 1, 1, GridObject::Cube);   // Posicionar un cubo en (1, 1, 1)
+    grid.place_object(5, 5, 5, GridObject::Sphere); // Posicionar una esfera en (5, 5, 5)
+
+    let mut objects: Vec<Box<dyn RayIntersect>> = Vec::new();
+
+    // Crear objetos en el grid según lo que hemos colocado
+    for x in 0..10 {
+        for y in 0..10 {
+            for z in 0..10 {
+                match grid.get_object(x, y, z) {
+                    GridObject::Cube => {
+                        let cube = Cube::new(
+                            Vec3::new(x as f32, y as f32, -(z as f32 + 5.0)), // Posicionar el cubo en la escena
+                            1.0,
+                            cube_material.clone(),
+                        );
+                        objects.push(Box::new(cube));
+                    }
+                    GridObject::Sphere => {
+                        let sphere = Sphere::new(
+                            Vec3::new(x as f32, y as f32, -(z as f32 + 5.0)), // Posicionar la esfera en la escena
+                            0.5,
+                            sphere_material.clone(),
+                        );
+                        objects.push(Box::new(sphere));
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+
+    // Luz ambiental e iluminación de la escena
+    let light = Light::new(
+        Vec3::new(0.0, 5.0, 5.0),   // Luz desde arriba y un poco detrás
+        Color::new(255, 255, 255),   // Color de la luz
+        5.0,                         // Intensidad de la luz
     );
-    
-
-    let light = Light::new(Vec3::new(2.0, 4.0, 3.0), Color::new(255, 255, 255), 2.0);
-
-    let objects: Vec<Box<dyn RayIntersect>> = vec![
-        Box::new(sphere),
-        Box::new(cube),
-    ];
 
     let mut camera = Camera::new(
-        Vec3::new(0.0, 0.0, 5.0),
-        Vec3::new(0.0, 0.0, 0.0),
-        Vec3::new(0.0, 1.0, 0.0),
+        Vec3::new(0.0, 0.0, 15.0),   // Colocar la cámara más lejos para ver más del grid
+        Vec3::new(0.0, 0.0, 0.0),    // La cámara apunta al centro de la escena
+        Vec3::new(0.0, 1.0, 0.0),    // Vector "arriba" de la cámara
     );
 
     let mut window = Window::new(
@@ -92,8 +121,10 @@ fn main() {
     });
 
     let camera_speed = 0.1;
+    let camera_rotate_speed = 0.05;
 
     while window.is_open() && !window.is_key_down(Key::Escape) {
+        // Controlar el movimiento de la cámara
         if window.is_key_down(Key::W) {
             camera.move_camera(vec3(0.0, 0.0, -camera_speed));
         }
@@ -107,6 +138,21 @@ fn main() {
             camera.move_camera(vec3(camera_speed, 0.0, 0.0));
         }
 
+        // Controlar la rotación de la cámara
+        if window.is_key_down(Key::Up) {
+            camera.orbit(0.0, -camera_rotate_speed);
+        }
+        if window.is_key_down(Key::Down) {
+            camera.orbit(0.0, camera_rotate_speed);
+        }
+        if window.is_key_down(Key::Left) {
+            camera.orbit(-camera_rotate_speed, 0.0);
+        }
+        if window.is_key_down(Key::Right) {
+            camera.orbit(camera_rotate_speed, 0.0);
+        }
+
+        // Renderizar la escena
         render(&mut framebuffer, objects.as_slice(), &camera, &light);
 
         window.update_with_buffer(&framebuffer.buffer, framebuffer.width, framebuffer.height).unwrap();
