@@ -678,41 +678,17 @@ fn main() {
     objects.push(Box::new(moss_cube6));
 
     
-    //Crear el agua
-    let water_cube = Cube::new(
-        Vec3::new(3.0 * cube_size, 2.0 * cube_size, -2.0 * cube_size),  // Posición en la casilla superior (5)
-        cube_size,  // Tamaño del cubo
-        water_material.clone(),  // Usar el material de blackstone
-    );
 
-    let water_cube2 = Cube::new(
-        Vec3::new(2.0 * cube_size, 2.0 * cube_size, -2.0 * cube_size),  // Posición en la casilla superior (5)
-        cube_size,  // Tamaño del cubo
-        water_material.clone(),  // Usar el material de blackstone
-    );
+    // Crear las posiciones originales de los cubos de agua
+    let mut water_cubes = vec![
+        Vec3::new(3.0 * cube_size, 2.0 * cube_size, -2.0 * cube_size),
+        Vec3::new(2.0 * cube_size, 2.0 * cube_size, -2.0 * cube_size),
+        Vec3::new(3.0 * cube_size, 1.5 * cube_size, -1.0 * cube_size),
+        Vec3::new(2.0 * cube_size, 1.5 * cube_size, -1.0 * cube_size),
+    ];
 
-    let water_cube3 = Cube::new(
-        Vec3::new(3.0 * cube_size, 1.5  * cube_size, -1.0 * cube_size),  // Posición en la casilla superior (5)
-        cube_size,  // Tamaño del cubo
-        water_material.clone(),  // Usar el material de blackstone
-    );
-
-    let water_cube4 = Cube::new(
-        Vec3::new(2.0 * cube_size, 1.5 * cube_size, -1.0 * cube_size),  // Posición en la casilla superior (5)
-        cube_size,  // Tamaño del cubo
-        water_material.clone(),  // Usar el material de blackstone
-    );
-
-
-    // Añadir el cubo a la lista de objetos
-    objects.push(Box::new(water_cube));
-    objects.push(Box::new(water_cube2));
-    objects.push(Box::new(water_cube3));
-    objects.push(Box::new(water_cube4));
-
-
-
-
+    // Variable de tiempo para animación
+    let mut t = 0.0;  
 
 
 
@@ -772,9 +748,25 @@ fn main() {
             camera.orbit(camera_rotate_speed, 0.0);
         }
 
+        // Animar los cubos de agua usando la función sin para variar la altura
+        for (i, pos) in water_cubes.iter().enumerate() {
+            let animated_y = pos.y + (0.5 * ((t * 2.5) + i as f32).sin());  // Aumentar la frecuencia con t * 2.0
+
+            let water_cube = Cube::new(
+                Vec3::new(pos.x, animated_y, pos.z),  // Posición animada
+                cube_size,  // Tamaño del cubo
+                water_material.clone(),  // Usar el material de agua
+            );
+
+            objects.push(Box::new(water_cube));
+        }
+
         // Renderizar la escena
         render(&mut framebuffer, objects.as_slice(), &camera, &light);
 
         window.update_with_buffer(&framebuffer.buffer, framebuffer.width, framebuffer.height).unwrap();
+
+         // Incrementar el tiempo para la animación
+        t += 0.03;
     }
 }
