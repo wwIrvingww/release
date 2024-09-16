@@ -31,6 +31,7 @@ fn load_texture(path: &str) -> Arc<Texture> {
 }
 
 // Define las texturas y materiales usando Arc
+// Define las texturas y materiales usando Arc
 fn define_materials() -> Vec<Arc<Material>> {
     vec![
         // Moss
@@ -63,8 +64,59 @@ fn define_materials() -> Vec<Arc<Material>> {
             texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/stone.png")),
             has_texture: true,
         }),
+        // Redstone
+        Arc::new(Material {
+            diffuse: Color::new(255, 0, 0),  // Color rojo para redstone
+            specular: 15.0,                  // Mayor especularidad para que brille más
+            albedo: [0.9, 0.1, 0.1, 0.0],
+            refractive_index: 1.4,
+            transparency: 0.0,
+            texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/redstone.png")),
+            has_texture: true,
+        }),
+        // Violetstone
+        Arc::new(Material {
+            diffuse: Color::new(150, 50, 200),  // Color púrpura
+            specular: 15.0,                     // Mayor reflectividad
+            albedo: [0.6, 0.4, 0.2, 0.0],
+            refractive_index: 1.3,
+            transparency: 0.0,
+            texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/violetstone.png")),
+            has_texture: true,
+        }),
+        // Blackstone
+        Arc::new(Material {
+            diffuse: Color::new(150, 50, 200),  // Color púrpura
+            specular: 15.0,                     // Mayor reflectividad
+            albedo: [0.6, 0.4, 0.2, 0.0],
+            refractive_index: 1.3,
+            transparency: 0.0,
+            texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/blackstone.png")),
+            has_texture: true,
+        }),
+        // Wood
+        Arc::new(Material {
+            diffuse: Color::new(150, 50, 200),  // Color púrpura
+            specular: 2.0,                     // Mayor reflectividad
+            albedo: [0.6, 0.4, 0.2, 0.0],
+            refractive_index: 1.3,
+            transparency: 0.0,
+            texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/wood.png")),
+            has_texture: true,
+        }),
+        // Door
+        Arc::new(Material {
+            diffuse: Color::new(150, 50, 200),  // Color púrpura
+            specular: 15.0,                     // Mayor reflectividad
+            albedo: [0.6, 0.4, 0.2, 0.0],
+            refractive_index: 1.3,
+            transparency: 0.0,
+            texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/door.png")),
+            has_texture: true,
+        }),
     ]
 }
+
 
 fn main() {
     let width = 800;
@@ -77,6 +129,15 @@ fn main() {
     let moss_material = materials[0].clone();
     let dirt_material = materials[1].clone();
     let stone_material = materials[2].clone();
+    let redstone_material = materials[3].clone();
+    let violetstone_material = materials[4].clone();
+    let blackstone_material = materials[5].clone();
+    let wood_material = materials[6].clone();
+    let door_material = materials[7].clone();
+
+
+
+
 
     // Crear un grid de 10x10x10
     let mut grid = Grid3D::new(10);
@@ -158,8 +219,26 @@ fn main() {
         stone_material.clone(),  // Usar el material de stone
     );
 
+     // Posición en la misma coordenada Z de la columna eliminada, a la misma altura que los otros dirts
+     let single_stone_cube2 = Cube::new(
+        Vec3::new(cube_size * 2.0, 2.0 * cube_size, -3.0 * cube_size),  // Posición para el segundo cubo de dirt
+        cube_size,  // Tamaño del cubo
+        stone_material.clone(),  // Usar el material de stone
+    );
+
+     // Posición en la misma coordenada Z de la columna eliminada, a la misma altura que los otros dirts
+     let single_stone_cube3 = Cube::new(
+        Vec3::new(cube_size * 3.0, 2.0 * cube_size, -3.0 * cube_size),  // Posición para el segundo cubo de dirt
+        cube_size,  // Tamaño del cubo
+        stone_material.clone(),  // Usar el material de stone
+    );
+
     // Añadir el cubo a la lista de objetos
     objects.push(Box::new(single_stone_cube));
+
+    objects.push(Box::new(single_stone_cube2));
+
+    objects.push(Box::new(single_stone_cube3));
 
 
         // Añadir dos cubos de dirt en las posiciones especificadas
@@ -174,14 +253,214 @@ fn main() {
             cube_size,  // Tamaño del cubo
             dirt_material.clone(),  // Usar el material de dirt
         );
+
+        let dirt_cube_3 = Cube::new(
+            Vec3::new(-cube_size, 2.0 * cube_size, -3.0 * cube_size),  // Posición para el segundo cubo de dirt
+            cube_size,  // Tamaño del cubo
+            dirt_material.clone(),  // Usar el material de dirt
+        );
+        
+        //A la izquierda de este, debe ir al agua
+        let dirt_cube_4 = Cube::new(
+            Vec3::new(cube_size * 4.0, 2.0 * cube_size, -2.0 * cube_size),  // Posición para el segundo cubo de dirt
+            cube_size,  // Tamaño del cubo
+            dirt_material.clone(),  // Usar el material de dirt
+        );
+
+        let dirt_cube_5 = Cube::new(
+            Vec3::new(cube_size * 4.0, 2.0 * cube_size, -1.0 * cube_size),  // Posición para el segundo cubo de dirt
+            cube_size,  // Tamaño del cubo
+            dirt_material.clone(),  // Usar el material de dirt
+        );
+
+        let dirt_cube_6 = Cube::new(
+            Vec3::new(cube_size * 4.0, 1.0 * cube_size, -2.0 * cube_size),  // Posición para el segundo cubo de dirt
+            cube_size,  // Tamaño del cubo
+            dirt_material.clone(),  // Usar el material de dirt
+        );
+
+        let dirt_cube_7 = Cube::new(
+            Vec3::new(cube_size * 1.0, 2.0 * cube_size, -3.0 * cube_size),  // Posición para el segundo cubo de dirt
+            cube_size,  // Tamaño del cubo
+            dirt_material.clone(),  // Usar el material de dirt
+        );
+
+        let dirt_cube_8 = Cube::new(
+            Vec3::new(cube_size * 2.0, 1.0 * cube_size, -3.0 * cube_size),  // Posición para el segundo cubo de dirt
+            cube_size,  // Tamaño del cubo
+            dirt_material.clone(),  // Usar el material de dirt
+        );
+
+        let dirt_cube_9 = Cube::new(
+            Vec3::new(cube_size * 3.0, 1.0 * cube_size, -3.0 * cube_size),  // Posición para el segundo cubo de dirt
+            cube_size,  // Tamaño del cubo
+            dirt_material.clone(),  // Usar el material de dirt
+        );
     
         // Añadir los cubos a la lista de objetos
         objects.push(Box::new(dirt_cube_1));
         objects.push(Box::new(dirt_cube_2));
-    
+        objects.push(Box::new(dirt_cube_3));
+        objects.push(Box::new(dirt_cube_4));
+        objects.push(Box::new(dirt_cube_5));
+        objects.push(Box::new(dirt_cube_6));
+        objects.push(Box::new(dirt_cube_7));
+        objects.push(Box::new(dirt_cube_8));
+        objects.push(Box::new(dirt_cube_9));
 
 
 
+
+
+
+
+
+
+        // Añadir un cubo de redstone en una posición que tú elijas
+        let redstone_material = materials[3].clone();  // Usar el material de redstone
+
+        let redstone_material2 = materials[3].clone();  // Usar el material de redstone
+
+        let redstone_cube = Cube::new(
+            Vec3::new(-cube_size, 3.0 * cube_size, -3.0 * cube_size),  // Posición para el segundo cubo de dirt
+            cube_size,  // Tamaño del cubo
+            redstone_material.clone(),  // Usar el material de redstone
+        );
+
+
+        let redstone_cube2 = Cube::new(
+            Vec3::new(-cube_size, 1.0 * cube_size, -3.0 * cube_size),  // Posición para el segundo cubo de dirt
+            cube_size,  // Tamaño del cubo
+            redstone_material.clone(),  // Usar el material de redstone
+        );
+
+        let redstone_cube3 = Cube::new(
+            Vec3::new(cube_size * 0.0, 2.0 * cube_size, -3.0 * cube_size),  // Posición para el segundo cubo de dirt
+            cube_size,  // Tamaño del cubo
+            redstone_material.clone(),  // Usar el material de redstone
+        );
+
+        // Añadir el cubo a la lista de objetos
+        objects.push(Box::new(redstone_cube));
+
+        objects.push(Box::new(redstone_cube2));
+
+        objects.push(Box::new(redstone_cube3));
+
+
+        // Añadir una fila de cubos de dirt desde la primera hasta la última posición
+        for x in 0..=4 {
+            let dirt_cube = Cube::new(
+                Vec3::new(x as f32 * cube_size, 3.0 * cube_size, -3.0 * cube_size),  // Posición en la fila
+                cube_size,  // Tamaño del cubo
+                dirt_material.clone(),  // Usar el material de dirt
+            );
+            // Añadir el cubo a la lista de objetos
+            objects.push(Box::new(dirt_cube));
+        }
+
+        // Crear un cubo de violetstone en una posición específica
+        let violetstone_cube = Cube::new(
+            Vec3::new(cube_size, 2.0 * cube_size, -3.0 * cube_size),  // Posición para el segundo cubo de dirt
+            cube_size,  // Tamaño del cubo
+            violetstone_material.clone(),  // Usar el material de violetstone
+        );
+
+        // Crear un cubo de violetstone en una posición específica
+        let violetstone_cube2 = Cube::new(
+            Vec3::new(cube_size * 0.0, 1.0 * cube_size, -3.0 * cube_size),  // Posición para el segundo cubo de dirt
+            cube_size,  // Tamaño del cubo
+            violetstone_material.clone(),  // Usar el material de violetstone
+        );
+
+        // Añadir el cubo a la lista de objetos
+        objects.push(Box::new(violetstone_cube));
+        objects.push(Box::new(violetstone_cube2));
+
+        // Crear un cubo de blackstone en una posición específica
+        let blackstone_cube = Cube::new(
+            Vec3::new(cube_size * 4.0, 1.0 * cube_size, -1.0 * cube_size),  // Posición para el segundo cubo de dirt
+            cube_size,  // Tamaño del cubo
+            blackstone_material.clone(),  // Usar el material de blackstone
+        );
+
+        let blackstone_cube2 = Cube::new(
+            Vec3::new(cube_size * 3.0, 1.0 * cube_size, 0.0 * cube_size),  // Posición para el segundo cubo de dirt
+            cube_size,  // Tamaño del cubo
+            blackstone_material.clone(),  // Usar el material de blackstone
+        );
+
+        let blackstone_cube3 = Cube::new(
+            Vec3::new(cube_size * 2.0, 1.0 * cube_size, 0.0 * cube_size),  // Posición para el segundo cubo de dirt
+            cube_size,  // Tamaño del cubo
+            blackstone_material.clone(),  // Usar el material de blackstone
+        );
+
+        let blackstone_cube4 = Cube::new(
+            Vec3::new(cube_size * 1.0, 1.0 * cube_size, -1.0 * cube_size),  // Posición para el segundo cubo de dirt
+            cube_size,  // Tamaño del cubo
+            blackstone_material.clone(),  // Usar el material de blackstone
+        );
+
+        let blackstone_cube5 = Cube::new(
+            Vec3::new(cube_size * 1.0, 1.0 * cube_size, -2.0 * cube_size),  // Posición para el segundo cubo de dirt
+            cube_size,  // Tamaño del cubo
+            blackstone_material.clone(),  // Usar el material de blackstone
+        );
+
+        // Añadir el cubo a la lista de objetos
+        objects.push(Box::new(blackstone_cube));
+        objects.push(Box::new(blackstone_cube2));
+        objects.push(Box::new(blackstone_cube3));
+        objects.push(Box::new(blackstone_cube4));
+        objects.push(Box::new(blackstone_cube5));
+
+        
+    // Añadir tres cubos de wood en una misma columna desde la posición 4 a la 6 en el eje Y
+    for y in 4..=6 { // Desde la posición 4 hasta la 6 en el eje Y
+        let cube_wood = Cube::new(
+            Vec3::new(-cube_size, (y as f32) * cube_size, -4.0 * cube_size), // Columna izquierda en el eje X = -cube_size, con la altura en Y de 4 a 6
+            cube_size,  // Tamaño del cubo
+            wood_material.clone(),  // Usar el material de wood
+        );
+        objects.push(Box::new(cube_wood));
+    }
+
+    for y in 4..=6 { // Desde la posición 4 hasta la 6 en el eje Y
+        let cube_wood = Cube::new(
+            Vec3::new(-cube_size, (y as f32) * cube_size, -3.0 * cube_size), // Columna izquierda en el eje X = -cube_size, con la altura en Y de 4 a 6
+            cube_size,  // Tamaño del cubo
+            wood_material.clone(),  // Usar el material de wood
+        );
+        objects.push(Box::new(cube_wood));
+    }
+
+    let wood_cube = Cube::new(
+            Vec3::new(cube_size * 0.0, 6.0 * cube_size, -3.0 * cube_size),  // Posición para el segundo cubo de dirt
+            cube_size,  // Tamaño del cubo
+            wood_material.clone(),  // Usar el material de blackstone
+    );
+
+    // Añadir el cubo a la lista de objetos
+    objects.push(Box::new(wood_cube));
+
+    // Añadir un cubo que ocupe dos casillas en altura
+    let door = Cube::new(
+        Vec3::new(0.0 * cube_size, 4.0 * cube_size, -3.0 * cube_size),  // Posición en la casilla inferior (4)
+        cube_size,  // Tamaño del cubo en una unidad
+        door_material.clone(),  // Usar el material de la puerta
+    );
+
+    // Añadir el segundo cubo de la "puerta" para ocupar la segunda casilla
+    let door_upper = Cube::new(
+        Vec3::new(0.0 * cube_size, 5.0 * cube_size, -3.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo en una unidad
+        door_material.clone(),  // Usar el material de la puerta
+    );
+
+    // Añadir los cubos a la lista de objetos
+    objects.push(Box::new(door));
+    objects.push(Box::new(door_upper));
 
     // Luz ambiental e iluminación de la escena
     let light = Light::new(
@@ -191,11 +470,11 @@ fn main() {
     );
 
     let mut camera = Camera::new(
-        Vec3::new(0.0, 0.0, 15.0),   // Colocar la cámara más lejos para ver más del grid
-        Vec3::new(0.0, 0.0, 0.0),    // La cámara apunta al centro de la escena
-        Vec3::new(0.0, 1.0, 0.0),    // Vector "arriba" de la cámara
+        Vec3::new(0.0, 2.5, 5.0),   // Aumentar la altura de la cámara (Y = 5.0) y alejarla (Z = 10.0)
+        Vec3::new(0.0, 0.0, 0.0),    // La cámara sigue apuntando al centro de la escena
+        Vec3::new(0.0, 1.0, 0.0),    // Vector "arriba" de la cámara, mantenerlo como (0.0, 1.0, 0.0)
     );
-
+    
     let mut window = Window::new(
         "Raytracer with Moss, Dirt and Stone",
         width,
