@@ -114,6 +114,26 @@ fn define_materials() -> Vec<Arc<Material>> {
             texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/door.png")),
             has_texture: true,
         }),
+        // Log
+        Arc::new(Material {
+            diffuse: Color::new(150, 100, 50),
+            specular: 5.0,
+            albedo: [0.4, 0.2, 0.1, 0.0],
+            refractive_index: 1.0,
+            transparency: 0.0,
+            texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/log.png")),
+            has_texture: true,
+        }),
+        // Leaves
+        Arc::new(Material {
+            diffuse: Color::new(40, 150, 40),
+            specular: 10.0,
+            albedo: [0.5, 0.3, 0.1, 0.0],
+            refractive_index: 1.0,
+            transparency: 0.0,
+            texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/leaves.png")),
+            has_texture: true,
+        }),
     ]
 }
 
@@ -134,6 +154,10 @@ fn main() {
     let blackstone_material = materials[5].clone();
     let wood_material = materials[6].clone();
     let door_material = materials[7].clone();
+    let log_material = materials[8].clone();
+    let leaves_material = materials[9].clone();
+
+
 
 
 
@@ -441,8 +465,41 @@ fn main() {
             wood_material.clone(),  // Usar el material de blackstone
     );
 
+    let wood_cube2 = Cube::new(
+        Vec3::new(1.0 * cube_size, 4.0 * cube_size, -3.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo
+        wood_material.clone(),  // Usar el material de blackstone
+    );
+
+    let wood_cube3 = Cube::new(
+        Vec3::new(1.0 * cube_size, 5.0 * cube_size, -3.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo
+        wood_material.clone(),  // Usar el material de blackstone
+    );
+
+    let wood_cube4 = Cube::new(
+        Vec3::new(1.0 * cube_size, 5.5 * cube_size, -3.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size ,  // Tamaño del cubo
+        wood_material.clone(),  // Usar el material de blackstone
+    );
+
+
     // Añadir el cubo a la lista de objetos
     objects.push(Box::new(wood_cube));
+    objects.push(Box::new(wood_cube2));
+    objects.push(Box::new(wood_cube3));
+    objects.push(Box::new(wood_cube4));
+
+    for y in 4..=5 { // Desde la posición 4 hasta la 6 en el eje Y
+        let cube_wood = Cube::new(
+            Vec3::new(cube_size * 2.0, (y as f32) * cube_size, -3.0 * cube_size), // Columna izquierda en el eje X = -cube_size, con la altura en Y de 4 a 6
+            cube_size,  // Tamaño del cubo
+            wood_material.clone(),  // Usar el material de wood
+        );
+        objects.push(Box::new(cube_wood));
+    }
+
+
 
     // Añadir un cubo que ocupe dos casillas en altura
     let door = Cube::new(
@@ -462,6 +519,158 @@ fn main() {
     objects.push(Box::new(door));
     objects.push(Box::new(door_upper));
 
+    //Añadir cubos del log para el arbol
+    
+    for y in 4..=6 { // Desde la posición 4 hasta la 6 en el eje Y
+        let cube_log = Cube::new(
+            Vec3::new(cube_size * 3.0, (y as f32) * cube_size, -3.0 * cube_size), // Columna izquierda en el eje X = -cube_size, con la altura en Y de 4 a 6
+            cube_size,  // Tamaño del cubo
+            log_material.clone(),  // Usar el material de wood
+        );
+        objects.push(Box::new(cube_log));
+    }
+
+    //Añadir moss para la forma de la tortuga
+
+
+
+
+    //Añadir cubos paras las hojas
+
+    for z in -5..=-2 { // Desde la posición 4 hasta la 6 en el eje Y
+        let leaves_cube = Cube::new(
+            Vec3::new(cube_size * 2.0, 7.0 * cube_size, (z as f32) * cube_size), // Columna izquierda en el eje X = -cube_size, con la altura en Y de 4 a 6
+            cube_size,  // Tamaño del cubo
+            leaves_material.clone(),  // Usar el material de wood
+        );
+        objects.push(Box::new(leaves_cube));
+    }
+
+    for z in -5..=-2 { // Desde la posición 4 hasta la 6 en el eje Y
+        let leaves_cube = Cube::new(
+            Vec3::new(cube_size * 1.0, 7.0 * cube_size, (z as f32) * cube_size), // Columna izquierda en el eje X = -cube_size, con la altura en Y de 4 a 6
+            cube_size,  // Tamaño del cubo
+            leaves_material.clone(),  // Usar el material de wood
+        );
+        objects.push(Box::new(leaves_cube));
+    }
+
+    for z in -5..=-2 { // Desde la posición 4 hasta la 6 en el eje Y
+        let leaves_cube = Cube::new(
+            Vec3::new(4.0 * cube_size * 1.0, 7.0 * cube_size, (z as f32) * cube_size), // Columna izquierda en el eje X = -cube_size, con la altura en Y de 4 a 6
+            cube_size,  // Tamaño del cubo
+            leaves_material.clone(),  // Usar el material de wood
+        );
+        objects.push(Box::new(leaves_cube));
+    }
+
+    for z in -5..=-2 { // Desde la posición 4 hasta la 6 en el eje Y
+        let leaves_cube = Cube::new(
+            Vec3::new(5.0 * cube_size * 1.0, 7.0 * cube_size, (z as f32) * cube_size), // Columna izquierda en el eje X = -cube_size, con la altura en Y de 4 a 6
+            cube_size,  // Tamaño del cubo
+            leaves_material.clone(),  // Usar el material de wood
+        );
+        objects.push(Box::new(leaves_cube));
+    }
+
+    for z in -5..=-2 { // Desde la posición 4 hasta la 6 en el eje Y
+        let leaves_cube = Cube::new(
+            Vec3::new(cube_size * 2.0, 8.0 * cube_size, (z as f32) * cube_size), // Columna izquierda en el eje X = -cube_size, con la altura en Y de 4 a 6
+            cube_size,  // Tamaño del cubo
+            leaves_material.clone(),  // Usar el material de wood
+        );
+        objects.push(Box::new(leaves_cube));
+    }
+
+    for z in -5..=-2 { // Desde la posición 4 hasta la 6 en el eje Y
+        let leaves_cube = Cube::new(
+            Vec3::new(cube_size * 4.0, 8.0 * cube_size, (z as f32) * cube_size), // Columna izquierda en el eje X = -cube_size, con la altura en Y de 4 a 6
+            cube_size,  // Tamaño del cubo
+            leaves_material.clone(),  // Usar el material de wood
+        );
+        objects.push(Box::new(leaves_cube));
+    }
+
+    
+    let leaves_cube = Cube::new(
+        Vec3::new(3.0 * cube_size, 7.0 * cube_size, -2.0 * cube_size),
+        cube_size,  // Tamaño del cubo en una unidad
+        leaves_material.clone(),  // Usar el material de la puerta
+    );
+
+        
+    let leaves_cube2 = Cube::new(
+        Vec3::new(3.0 * cube_size, 8.0 * cube_size, -2.0 * cube_size),
+        cube_size,  // Tamaño del cubo en una unidad
+        leaves_material.clone(),  // Usar el material de la puerta
+    );
+
+    let leaves_cube3 = Cube::new(
+        Vec3::new(3.0 * cube_size, 9.0 * cube_size, -3.0 * cube_size),
+        cube_size,  // Tamaño del cubo en una unidad
+        leaves_material.clone(),  // Usar el material de la puerta
+    );
+
+
+    // Añadir los cubos a la lista de objetos
+    objects.push(Box::new(leaves_cube));
+    objects.push(Box::new(leaves_cube2));
+    objects.push(Box::new(leaves_cube3));
+
+
+    //Añadir moss para la tortuga
+    let moss_cube = Cube::new(
+        Vec3::new(2.0 * cube_size, 0.0 * cube_size, 1.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size ,  // Tamaño del cubo
+        moss_material.clone(),  // Usar el material de blackstone
+    );
+
+    let moss_cube2 = Cube::new(
+        Vec3::new(2.0 * cube_size, 1.0 * cube_size, 2.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo
+        moss_material.clone(),  // Usar el material de blackstone
+    );
+
+    let moss_cube3 = Cube::new(
+        Vec3::new(-2.0 * cube_size, 0.0 * cube_size, -3.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo
+        moss_material.clone(),  // Usar el material de blackstone
+    );
+
+    let moss_cube4 = Cube::new(
+        Vec3::new(-1.0 * cube_size, 0.0 * cube_size, -2.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo
+        moss_material.clone(),  // Usar el material de blackstone
+    );
+
+    let moss_cube5 = Cube::new(
+        Vec3::new(6.0 * cube_size, 0.0 * cube_size, -3.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo
+        moss_material.clone(),  // Usar el material de blackstone
+    );
+
+    
+    let moss_cube6 = Cube::new(
+        Vec3::new(5.0 * cube_size, 0.0 * cube_size, -2.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo
+        moss_material.clone(),  // Usar el material de blackstone
+    );
+
+
+    // Añadir el cubo a la lista de objetos
+    objects.push(Box::new(moss_cube));
+    objects.push(Box::new(moss_cube2));
+    objects.push(Box::new(moss_cube3));
+    objects.push(Box::new(moss_cube4));
+    objects.push(Box::new(moss_cube5));
+    objects.push(Box::new(moss_cube6));
+
+
+
+
+
+
+
     // Luz ambiental e iluminación de la escena
     let light = Light::new(
         Vec3::new(0.0, 5.0, 5.0),   // Luz desde arriba y un poco detrás
@@ -476,7 +685,7 @@ fn main() {
     );
     
     let mut window = Window::new(
-        "Raytracer with Moss, Dirt and Stone",
+        "Irving's Diorama",
         width,
         height,
         WindowOptions::default(),
