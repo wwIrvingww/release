@@ -134,6 +134,16 @@ fn define_materials() -> Vec<Arc<Material>> {
             texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/leaves.png")),
             has_texture: true,
         }),
+        //Water
+        Arc::new(Material {
+            diffuse: Color::new(40, 150, 200),  // Un color azul claro para simular el agua
+            specular: 50.0,  // Aumentar el specular para hacer que el agua brille más
+            albedo: [0.1, 0.9, 0.1, 0.0],  // Mayor reflectividad y brillo, menos absorción de luz
+            refractive_index: 1.33,  // Índice de refracción típico del agua
+            transparency: 0.8,  // Alta transparencia
+            texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/water.png")),
+            has_texture: true,
+        }),
     ]
 }
 
@@ -156,6 +166,8 @@ fn main() {
     let door_material = materials[7].clone();
     let log_material = materials[8].clone();
     let leaves_material = materials[9].clone();
+    let water_material = materials[10].clone();
+
 
 
 
@@ -664,6 +676,41 @@ fn main() {
     objects.push(Box::new(moss_cube4));
     objects.push(Box::new(moss_cube5));
     objects.push(Box::new(moss_cube6));
+
+    
+    //Crear el agua
+    let water_cube = Cube::new(
+        Vec3::new(3.0 * cube_size, 2.0 * cube_size, -2.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo
+        water_material.clone(),  // Usar el material de blackstone
+    );
+
+    let water_cube2 = Cube::new(
+        Vec3::new(2.0 * cube_size, 2.0 * cube_size, -2.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo
+        water_material.clone(),  // Usar el material de blackstone
+    );
+
+    let water_cube3 = Cube::new(
+        Vec3::new(3.0 * cube_size, 1.5  * cube_size, -1.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo
+        water_material.clone(),  // Usar el material de blackstone
+    );
+
+    let water_cube4 = Cube::new(
+        Vec3::new(2.0 * cube_size, 1.5 * cube_size, -1.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo
+        water_material.clone(),  // Usar el material de blackstone
+    );
+
+
+    // Añadir el cubo a la lista de objetos
+    objects.push(Box::new(water_cube));
+    objects.push(Box::new(water_cube2));
+    objects.push(Box::new(water_cube3));
+    objects.push(Box::new(water_cube4));
+
+
 
 
 
