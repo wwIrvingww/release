@@ -11,6 +11,7 @@ mod cast_ray;
 
 use framebuffer::Framebuffer;
 use render::render;
+use std::time::{Instant, Duration};
 use camera::Camera;
 use material::{Material, Texture};
 use color::Color;
@@ -146,11 +147,15 @@ fn define_materials() -> Vec<Arc<Material>> {
     ]
 }
 
-
 fn main() {
     let width = 800;
     let height = 600;
 
+    let mut last_frame_time = Instant::now();
+    let mut fps = 60.0;
+    let fps_threshold = 30.0; // Umbral de FPS para reducir la resolución
+
+    // Crear el framebuffer con la resolución inicial
     let mut framebuffer = Framebuffer::new(width, height);
 
     // Definir los materiales
@@ -246,6 +251,25 @@ fn main() {
     let mut t = 0.0;
 
     while window.is_open() && !window.is_key_down(Key::Escape) {
+        // Calcular el tiempo entre cuadros
+        let current_time = Instant::now();
+        let delta_time = current_time.duration_since(last_frame_time);
+        last_frame_time = current_time;
+
+        // Calcular los FPS actuales
+        fps = 1.0 / delta_time.as_secs_f32();
+
+        // Determinar si hay mucha carga
+        let es_mucha_carga = fps < fps_threshold;
+
+        // Ajustar la resolución en función de la carga
+        let scale_factor = if es_mucha_carga { 0.5 } else { 1.0 };
+        let scaled_width = (width as f32 * scale_factor) as usize;
+        let scaled_height = (height as f32 * scale_factor) as usize;
+
+        // Crear un framebuffer escalado
+        framebuffer = Framebuffer::new(scaled_width, scaled_height);
+
         // Controlar el movimiento de la cámara
         if window.is_key_down(Key::W) {
             camera.move_camera(vec3(0.0, 0.0, -camera_speed));
@@ -282,18 +306,23 @@ fn main() {
         for (i, cube) in water_cubes.iter_mut().enumerate() {
             let animated_y = cube.position().y + 0.05 * (0.1 * ((t + i as f32).sin()));
             cube.set_position(Vec3::new(cube.position().x, animated_y, cube.position().z));
-        
+
             // Añadir los cubos de agua actualizados a la lista de objetos
             objects.push(Box::new(cube.clone()));
         }
-        
+
         // Renderizar la escena
         render(&mut framebuffer, objects.as_slice(), &camera, &light);
 
-        // Actualizar el buffer de la ventana
-        window.update_with_buffer(&framebuffer.buffer, framebuffer.width, framebuffer.height).unwrap();
+        // Escalar el framebuffer y actualizar la ventana con el tamaño original
+        window.update_with_buffer(
+            &framebuffer.buffer, 
+            scaled_width, 
+            scaled_height
+        ).unwrap();
 
         // Incrementar el tiempo para la animación
         t += 0.03;
     }
 }
+
