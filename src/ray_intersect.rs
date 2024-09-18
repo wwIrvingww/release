@@ -39,6 +39,29 @@ impl Intersect {
     }
 }
 
-pub trait RayIntersect {
+// Define el trait CloneBox
+pub trait CloneBox {
+    fn clone_box(&self) -> Box<dyn RayIntersect>;
+}
+
+// Implementa CloneBox para cualquier tipo que implemente RayIntersect y Clone
+impl<T> CloneBox for T
+where
+    T: 'static + RayIntersect + Clone,
+{
+    fn clone_box(&self) -> Box<dyn RayIntersect> {
+        Box::new(self.clone())
+    }
+}
+
+// Define el trait RayIntersect, que ahora hereda de CloneBox
+pub trait RayIntersect: CloneBox {
     fn ray_intersect(&self, ray_origin: &Vec3, ray_direction: &Vec3) -> Intersect;
+}
+
+// Implementa Clone para Box<dyn RayIntersect> usando clone_box
+impl Clone for Box<dyn RayIntersect> {
+    fn clone(&self) -> Box<dyn RayIntersect> {
+        self.clone_box()
+    }
 }

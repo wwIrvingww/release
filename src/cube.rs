@@ -3,10 +3,11 @@ use crate::ray_intersect::{RayIntersect, Intersect};
 use std::sync::Arc;
 use crate::material::Material;
 
+#[derive(Clone)]
 pub struct Cube {
     pub center: Vec3,
     pub size: f32,
-    pub material: Arc<Material>,  // Cambia esto para aceptar Arc<Material>
+    pub material: Arc<Material>,
 }
 
 impl Cube {
@@ -27,10 +28,18 @@ impl Cube {
     pub fn max(&self) -> Vec3 {
         self.center + Vec3::new(self.size / 2.0, self.size / 2.0, self.size / 2.0)
     }
-}
 
-// Función para calcular las coordenadas UV
-impl Cube {
+    // Obtener la posición del cubo (equivalente a su centro)
+    pub fn position(&self) -> Vec3 {
+        self.center
+    }
+
+    // Establecer una nueva posición (actualizar el centro)
+    pub fn set_position(&mut self, new_position: Vec3) {
+        self.center = new_position;
+    }
+
+    // Obtener coordenadas UV
     pub fn get_uv(&self, point: &Vec3, normal: &Vec3) -> (f32, f32) {
         let mut u = 0.0;
         let mut v = 0.0;
