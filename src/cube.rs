@@ -100,21 +100,21 @@ impl RayIntersect for Cube {
             // Determinar la normal utilizando el centro
             let mut normal = Vec3::new(0.0, 0.0, 0.0);
 
-            let epsilon = 0.001; // Pequeña tolerancia para comparar valores cercanos
+            let epsilon = 0.001;
             let center_to_point = point - self.center;
 
             if (center_to_point.x.abs() - (self.max().x - self.center.x)).abs() < epsilon {
-                normal.x = center_to_point.x.signum(); // Normal en el eje X
+                normal.x = center_to_point.x.signum();
             } else if (center_to_point.x.abs() - (self.center.x - self.min().x)).abs() < epsilon {
-                normal.x = -center_to_point.x.signum(); // Normal en el eje X (cara opuesta)
+                normal.x = -center_to_point.x.signum();
             } else if (center_to_point.y.abs() - (self.max().y - self.center.y)).abs() < epsilon {
-                normal.y = center_to_point.y.signum(); // Normal en el eje Y
+                normal.y = center_to_point.y.signum();
             } else if (center_to_point.y.abs() - (self.center.y - self.min().y)).abs() < epsilon {
-                normal.y = -center_to_point.y.signum(); // Normal en el eje Y (cara opuesta)
+                normal.y = -center_to_point.y.signum();
             } else if (center_to_point.z.abs() - (self.max().z - self.center.z)).abs() < epsilon {
-                normal.z = center_to_point.z.signum(); // Normal en el eje Z
+                normal.z = center_to_point.z.signum();
             } else if (center_to_point.z.abs() - (self.center.z - self.min().z)).abs() < epsilon {
-                normal.z = -center_to_point.z.signum(); // Normal en el eje Z (cara opuesta)
+                normal.z = -center_to_point.z.signum();
             }
 
             // Obtener coordenadas UV
@@ -124,22 +124,26 @@ impl RayIntersect for Cube {
                 distance,
                 point,
                 normal,
-                material: (*self.material).clone(),  // Desreferencia Arc<Material>
+                material: (*self.material).clone(),
                 is_intersecting: true,
                 u,
                 v,
             };
         }
 
-        // Si no hay intersección, devolvemos un Intersect vacío
         Intersect {
             is_intersecting: false,
             distance: 0.0,
             point: Vec3::new(0.0, 0.0, 0.0),
             normal: Vec3::new(0.0, 0.0, 0.0),
-            material: (*self.material).clone(),  // Desreferencia Arc<Material>
+            material: (*self.material).clone(),
             u: 0.0,
             v: 0.0,
         }
+    }
+
+    // Implementación del método `position` que devuelve el centro del cubo
+    fn position(&self) -> Vec3 {
+        self.position()
     }
 }

@@ -1,21 +1,48 @@
 #[allow(dead_code)]
-use nalgebra_glm::Vec3;
+use nalgebra_glm::{Vec3, Mat4, look_at, perspective};
 
 pub struct Camera {
     pub eye: Vec3,    // Posición de la cámara en el espacio mundial
     pub center: Vec3, // Punto que la cámara está mirando
     pub up: Vec3,     // Vector "arriba" de la cámara
+    pub fov: f32,     // Campo de visión en radianes
+    pub aspect_ratio: f32,  // Relación de aspecto (ancho/alto)
+    pub near_plane: f32,    // Plano cercano de recorte
+    pub far_plane: f32,     // Plano lejano de recorte
 }
 
 impl Camera {
     // Constructor para crear una nueva cámara
-    pub fn new(eye: Vec3, center: Vec3, up: Vec3) -> Self {
-        Camera { eye, center, up }
+    pub fn new(eye: Vec3, center: Vec3, up: Vec3, fov: f32, aspect_ratio: f32, near_plane: f32, far_plane: f32) -> Self {
+        Camera { 
+            eye, 
+            center, 
+            up, 
+            fov, 
+            aspect_ratio, 
+            near_plane, 
+            far_plane 
+        }
     }
 
     // Método para obtener la dirección de la vista (center - eye)
     pub fn view_direction(&self) -> Vec3 {
         (self.center - self.eye).normalize()
+    }
+
+    // Método para obtener la matriz de vista
+    pub fn get_view_matrix(&self) -> Mat4 {
+        look_at(&self.eye, &self.center, &self.up)
+    }
+
+    // Método para obtener la matriz de proyección
+    pub fn get_projection_matrix(&self) -> Mat4 {
+        perspective(self.aspect_ratio, self.fov, self.near_plane, self.far_plane)
+    }
+
+    // Método para obtener la matriz combinada de vista/proyección
+    pub fn get_view_projection_matrix(&self) -> Mat4 {
+        self.get_projection_matrix() * self.get_view_matrix()
     }
 
     // Cambio de base

@@ -57,6 +57,7 @@ where
 // Define el trait RayIntersect, que ahora hereda de CloneBox
 pub trait RayIntersect: CloneBox {
     fn ray_intersect(&self, ray_origin: &Vec3, ray_direction: &Vec3) -> Intersect;
+    fn position(&self) -> Vec3; // Añadir este método
 }
 
 // Implementa Clone para Box<dyn RayIntersect> usando clone_box
