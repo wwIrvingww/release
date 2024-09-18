@@ -217,6 +217,69 @@ fn main() {
         static_objects.push(Box::new(cube_right));
     }
 
+    //Añadir moss para la CABEZA y PATAS de la tortuga
+    let moss_cube = Cube::new(
+        Vec3::new(2.0 * cube_size, 0.0 * cube_size, 1.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size ,  // Tamaño del cubo
+        moss_material.clone(),  // Usar el material de blackstone
+    );
+
+    let moss_cube2 = Cube::new(
+        Vec3::new(2.0 * cube_size, 1.0 * cube_size, 2.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo
+        moss_material.clone(),  // Usar el material de blackstone
+    );
+
+    let moss_cube3 = Cube::new(
+        Vec3::new(-2.0 * cube_size, 0.0 * cube_size, -3.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo
+        moss_material.clone(),  // Usar el material de blackstone
+    );
+
+    let moss_cube4 = Cube::new(
+        Vec3::new(-1.0 * cube_size, 0.0 * cube_size, -2.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo
+        moss_material.clone(),  // Usar el material de blackstone
+    );
+
+    let moss_cube5 = Cube::new(
+        Vec3::new(6.0 * cube_size, 0.0 * cube_size, -3.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo
+        moss_material.clone(),  // Usar el material de blackstone
+    );
+
+    
+    let moss_cube6 = Cube::new(
+        Vec3::new(5.0 * cube_size, 0.0 * cube_size, -2.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo
+        moss_material.clone(),  // Usar el material de blackstone
+    );
+
+    let moss_cube7 = Cube::new(
+        Vec3::new(3.0 * cube_size, 0.0 * cube_size, 1.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo
+        moss_material.clone(),  // Usar el material de blackstone
+    );
+
+    
+    let moss_cube8 = Cube::new(
+        Vec3::new(3.0 * cube_size, 0.0 * cube_size, 1.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo
+        moss_material.clone(),  // Usar el material de blackstone
+    );
+
+
+    // Añadir el cubo a la lista de objetos
+    static_objects.push(Box::new(moss_cube));
+    static_objects.push(Box::new(moss_cube2));
+    static_objects.push(Box::new(moss_cube3));
+    static_objects.push(Box::new(moss_cube4));
+    static_objects.push(Box::new(moss_cube5));
+    static_objects.push(Box::new(moss_cube6));
+    static_objects.push(Box::new(moss_cube7));
+    static_objects.push(Box::new(moss_cube8));
+
+
     //**DIRT CUBOS BASE DEL FONDO**//
     // Añadir los 30 cubos de dirt (dos paredes de 15 cubos cada una)
     for z in 4..=5 { // Z = 4 para la primera pared, Z = 5 para la segunda
@@ -499,6 +562,118 @@ fn main() {
         static_objects.push(Box::new(cube_wood));
     }
 
+    //*DOOR*//
+        // Añadir un cubo que ocupe dos casillas en altura
+    let door = Cube::new(
+        Vec3::new(0.0 * cube_size, 4.0 * cube_size, -3.0 * cube_size),  // Posición en la casilla inferior (4)
+        cube_size,  // Tamaño del cubo en una unidad
+        door_material.clone(),  // Usar el material de la puerta
+    );
+
+    // Añadir el segundo cubo de la "puerta" para ocupar la segunda casilla
+    let door_upper = Cube::new(
+        Vec3::new(0.0 * cube_size, 5.0 * cube_size, -3.0 * cube_size),  // Posición en la casilla superior (5)
+        cube_size,  // Tamaño del cubo en una unidad
+        door_material.clone(),  // Usar el material de la puerta
+    );
+
+    // Añadir los cubos a la lista de objetos
+    static_objects.push(Box::new(door));
+    static_objects.push(Box::new(door_upper));
+
+    //**LOG PARA EL TRONCO//
+    for y in 4..=6 { // Desde la posición 4 hasta la 6 en el eje Y
+        let cube_log = Cube::new(
+            Vec3::new(cube_size * 3.0, (y as f32) * cube_size, -3.0 * cube_size), // Columna izquierda en el eje X = -cube_size, con la altura en Y de 4 a 6
+            cube_size,  // Tamaño del cubo
+            log_material.clone(),  // Usar el material de wood
+        );
+        static_objects.push(Box::new(cube_log));
+    }
+
+    //**LEAVES PARA LAS HOJAS DEL TRONCO**//
+    for z in -5..=-2 { // Desde la posición 4 hasta la 6 en el eje Y
+        let leaves_cube = Cube::new(
+            Vec3::new(cube_size * 2.0, 7.0 * cube_size, (z as f32) * cube_size), // Columna izquierda en el eje X = -cube_size, con la altura en Y de 4 a 6
+            cube_size,  // Tamaño del cubo
+            leaves_material.clone(),  // Usar el material de wood
+        );
+        static_objects.push(Box::new(leaves_cube));
+    }
+
+    for z in -5..=-2 { // Desde la posición 4 hasta la 6 en el eje Y
+        let leaves_cube = Cube::new(
+            Vec3::new(cube_size * 1.0, 7.0 * cube_size, (z as f32) * cube_size), // Columna izquierda en el eje X = -cube_size, con la altura en Y de 4 a 6
+            cube_size,  // Tamaño del cubo
+            leaves_material.clone(),  // Usar el material de wood
+        );
+        static_objects.push(Box::new(leaves_cube));
+    }
+
+    for z in -5..=-2 { // Desde la posición 4 hasta la 6 en el eje Y
+        let leaves_cube = Cube::new(
+            Vec3::new(4.0 * cube_size * 1.0, 7.0 * cube_size, (z as f32) * cube_size), // Columna izquierda en el eje X = -cube_size, con la altura en Y de 4 a 6
+            cube_size,  // Tamaño del cubo
+            leaves_material.clone(),  // Usar el material de wood
+        );
+        static_objects.push(Box::new(leaves_cube));
+    }
+
+    for z in -5..=-2 { // Desde la posición 4 hasta la 6 en el eje Y
+        let leaves_cube = Cube::new(
+            Vec3::new(5.0 * cube_size * 1.0, 7.0 * cube_size, (z as f32) * cube_size), // Columna izquierda en el eje X = -cube_size, con la altura en Y de 4 a 6
+            cube_size,  // Tamaño del cubo
+            leaves_material.clone(),  // Usar el material de wood
+        );
+        static_objects.push(Box::new(leaves_cube));
+    }
+
+    for z in -5..=-2 { // Desde la posición 4 hasta la 6 en el eje Y
+        let leaves_cube = Cube::new(
+            Vec3::new(cube_size * 2.0, 8.0 * cube_size, (z as f32) * cube_size), // Columna izquierda en el eje X = -cube_size, con la altura en Y de 4 a 6
+            cube_size,  // Tamaño del cubo
+            leaves_material.clone(),  // Usar el material de wood
+        );
+        static_objects.push(Box::new(leaves_cube));
+    }
+
+    for z in -5..=-2 { // Desde la posición 4 hasta la 6 en el eje Y
+        let leaves_cube = Cube::new(
+            Vec3::new(cube_size * 4.0, 8.0 * cube_size, (z as f32) * cube_size), // Columna izquierda en el eje X = -cube_size, con la altura en Y de 4 a 6
+            cube_size,  // Tamaño del cubo
+            leaves_material.clone(),  // Usar el material de wood
+        );
+        static_objects.push(Box::new(leaves_cube));
+    }
+
+    
+    let leaves_cube = Cube::new(
+        Vec3::new(3.0 * cube_size, 7.0 * cube_size, -2.0 * cube_size),
+        cube_size,  // Tamaño del cubo en una unidad
+        leaves_material.clone(),  // Usar el material de la puerta
+    );
+
+        
+    let leaves_cube2 = Cube::new(
+        Vec3::new(3.0 * cube_size, 8.0 * cube_size, -2.0 * cube_size),
+        cube_size,  // Tamaño del cubo en una unidad
+        leaves_material.clone(),  // Usar el material de la puerta
+    );
+
+    let leaves_cube3 = Cube::new(
+        Vec3::new(3.0 * cube_size, 9.0 * cube_size, -3.0 * cube_size),
+        cube_size,  // Tamaño del cubo en una unidad
+        leaves_material.clone(),  // Usar el material de la puerta
+    );
+
+
+    // Añadir los cubos a la lista de objetos
+    static_objects.push(Box::new(leaves_cube));
+    static_objects.push(Box::new(leaves_cube2));
+    static_objects.push(Box::new(leaves_cube3));
+
+
+
 
     //--------------------------------------------------------------------------------------------------------------------------//
 
@@ -519,7 +694,7 @@ fn main() {
     );
 
     let mut camera = Camera::new(
-        Vec3::new(0.0, 2.5, 6.5),
+        Vec3::new(0.0, 2.5, 5.0),
         Vec3::new(0.0, 0.0, 0.0),
         Vec3::new(0.0, 1.0, 0.0),
         45.0,
