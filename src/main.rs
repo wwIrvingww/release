@@ -30,117 +30,117 @@ fn load_texture(path: &str) -> Arc<Texture> {
     Texture::load_from_file(path).into()
 }
 
-// Define las texturas y materiales usando Arc
-// Define las texturas y materiales usando Arc
+
+// Define las texturas y materiales usando Arc con las rutas originales
 fn define_materials() -> Vec<Arc<Material>> {
     vec![
         // Moss
         Arc::new(Material {
-            diffuse: Color::new(40, 150, 40),
-            specular: 10.0,
-            albedo: [0.5, 0.3, 0.1, 0.0],
-            refractive_index: 1.0,
-            transparency: 0.0,
+            diffuse: Color::new(40, 150, 40),  // Color verde musgo
+            specular: 1.0,  // Sin brillo, no refleja luz
+            albedo: [0.1,0.2, 0.2, 0.0],  // Absorción de luz en lugar de reflectividad
+            refractive_index: 0.3,  // Sin distorsión visual
+            transparency: 0.1,  // Moderada transparencia
             texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/moss (1).png")),
             has_texture: true,
         }),
         // Dirt
         Arc::new(Material {
             diffuse: Color::new(150, 100, 50),
-            specular: 5.0,
-            albedo: [0.4, 0.2, 0.1, 0.0],
+            specular: 15.0,  // Bajo brillo
+            albedo: [0.2, 0.3, 0.1, 0.0],
             refractive_index: 1.0,
-            transparency: 0.0,
+            transparency: 0.4,
             texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/dirt.png")),
             has_texture: true,
         }),
         // Stone
         Arc::new(Material {
-            diffuse: Color::new(128, 128, 128),
-            specular: 8.0,
-            albedo: [0.4, 0.2, 0.2, 0.0],
-            refractive_index: 1.2,
-            transparency: 0.0,
+            diffuse: Color::new(105, 105, 105),
+            specular: 13.0,  // Mayor brillo que la tierra
+            albedo: [0.2,0.3, 0.1, 0.2],  // Absorción de luz en lugar de reflectividad
+            refractive_index: 1.0,
+            transparency: 0.1,
             texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/stone.png")),
             has_texture: true,
         }),
         // Redstone
         Arc::new(Material {
-            diffuse: Color::new(255, 0, 0),  // Color rojo para redstone
-            specular: 15.0,                  // Mayor especularidad para que brille más
-            albedo: [0.9, 0.1, 0.1, 0.0],
-            refractive_index: 1.4,
-            transparency: 0.0,
+            diffuse: Color::new(105, 105, 105),
+            specular: 13.0,  // Mayor brillo que la tierra
+            albedo: [0.2,0.3, 0.1, 0.2],  // Absorción de luz en lugar de reflectividad
+            refractive_index: 1.0,
+            transparency: 0.1,
             texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/redstone.png")),
             has_texture: true,
         }),
         // Violetstone
         Arc::new(Material {
-            diffuse: Color::new(150, 50, 200),  // Color púrpura
-            specular: 15.0,                     // Mayor reflectividad
-            albedo: [0.6, 0.4, 0.2, 0.0],
-            refractive_index: 1.3,
-            transparency: 0.0,
+            diffuse: Color::new(105, 105, 105),
+            specular: 23.0,  // Mayor brillo que la tierra
+            albedo: [0.2,0.4, 0.1, 0.2],  // Absorción de luz en lugar de reflectividad
+            refractive_index: 1.0,
+            transparency: 0.1,
             texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/violetstone.png")),
             has_texture: true,
         }),
         // Blackstone
         Arc::new(Material {
-            diffuse: Color::new(150, 50, 200),  // Color púrpura
-            specular: 15.0,                     // Mayor reflectividad
-            albedo: [0.6, 0.4, 0.2, 0.0],
-            refractive_index: 1.3,
+            diffuse: Color::new(30, 30, 30),
+            specular: 0.0,
+            albedo: [0.0, 0.0, 0.1, 0.0],
+            refractive_index: 0.1,
             transparency: 0.0,
             texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/blackstone.png")),
             has_texture: true,
         }),
         // Wood
         Arc::new(Material {
-            diffuse: Color::new(150, 50, 200),  // Color púrpura
-            specular: 2.0,                     // Mayor reflectividad
-            albedo: [0.6, 0.4, 0.2, 0.0],
-            refractive_index: 1.3,
-            transparency: 0.0,
+            diffuse: Color::new(139, 69, 19),
+            specular: 26.0,
+            albedo: [0.2,0.3, 0.1, 0.2],  // Absorción de luz en lugar de reflectividad
+            refractive_index: 1.0,
+            transparency: 0.5,
             texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/wood.png")),
             has_texture: true,
         }),
         // Door
         Arc::new(Material {
-            diffuse: Color::new(150, 50, 200),  // Color púrpura
-            specular: 15.0,                     // Mayor reflectividad
-            albedo: [0.6, 0.4, 0.2, 0.0],
-            refractive_index: 1.3,
+            diffuse: Color::new(160, 82, 45),
+            specular: 11.0,
+            albedo: [0.2,0.3, 0.1, 0.2],  // Absorción de luz en lugar de reflectividad
+            refractive_index: 1.1,
             transparency: 0.0,
             texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/door.png")),
             has_texture: true,
         }),
         // Log
         Arc::new(Material {
-            diffuse: Color::new(150, 100, 50),
-            specular: 5.0,
-            albedo: [0.4, 0.2, 0.1, 0.0],
-            refractive_index: 1.0,
-            transparency: 0.0,
+            diffuse: Color::new(72, 60, 50),
+            specular: 50.0,
+            albedo: [0.2, 0.2, 0.1, 0.0],
+            refractive_index: 0.9,
+            transparency: 0.8,
             texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/log.png")),
             has_texture: true,
         }),
         // Leaves
         Arc::new(Material {
-            diffuse: Color::new(40, 150, 40),
-            specular: 10.0,
-            albedo: [0.5, 0.3, 0.1, 0.0],
-            refractive_index: 1.0,
-            transparency: 0.0,
+            diffuse: Color::new(255, 192, 203),
+            specular: 28.0,
+            albedo: [0.2,0.3, 0.1, 0.1],  // Absorción de luz en lugar de reflectividad
+            refractive_index: 1.1,
+            transparency: 0.2,
             texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/leaves.png")),
             has_texture: true,
         }),
-        //Water
+        // Water
         Arc::new(Material {
-            diffuse: Color::new(40, 150, 200),  // Un color azul claro para simular el agua
-            specular: 50.0,  // Aumentar el specular para hacer que el agua brille más
-            albedo: [0.1, 0.9, 0.1, 0.0],  // Mayor reflectividad y brillo, menos absorción de luz
-            refractive_index: 1.33,  // Índice de refracción típico del agua
-            transparency: 0.8,  // Alta transparencia
+            diffuse: Color::new(40, 150, 200),
+            specular: 50.0,
+            albedo: [0.1, 0.9, 0.1, 0.0],
+            refractive_index: 1.33,
+            transparency: 5.8,
             texture: Some(load_texture("C:/Users/irvin/UVG/Sexto_Semestre/Graficas/release/textures/water.png")),
             has_texture: true,
         }),
@@ -696,13 +696,13 @@ fn main() {
 
     // Luz ambiental e iluminación de la escena
     let light = Light::new(
-        Vec3::new(0.0, 5.0, 5.0),   // Luz desde arriba y un poco detrás
-        Color::new(255, 255, 255),   // Color de la luz
-        5.0,                         // Intensidad de la luz
+        Vec3::new(0.0, 12.0,20.0),   // Posicion
+        Color::new(116,140,153),   // Color de la luz
+        3.0,                         // Intensidad de la luz
     );
 
     let mut camera = Camera::new(
-        Vec3::new(0.0, 2.5, 5.0),   // Aumentar la altura de la cámara (Y = 5.0) y alejarla (Z = 10.0)
+        Vec3::new(0.0, 2.5, 6.5),   // Aumentar la altura de la cámara (Y = 5.0) y alejarla (Z = 10.0)
         Vec3::new(0.0, 0.0, 0.0),    // La cámara sigue apuntando al centro de la escena
         Vec3::new(0.0, 1.0, 0.0),    // Vector "arriba" de la cámara, mantenerlo como (0.0, 1.0, 0.0)
     );
